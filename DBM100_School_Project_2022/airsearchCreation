@@ -1,0 +1,170 @@
+
+CREATE TABLE AllRecipies(
+idG INTEGER PRIMARY KEY,
+nameG TEXT,
+temperatureG INTEGER,
+timeMinutesG INTEGER,
+timeSecondsG INTEGER,
+recipieG TEXT,
+imageNameG TEXT,
+timeStampG TEXT,
+tables_Orgin TEXT
+);
+
+CREATE TABLE DinnerRecipies(
+idD INTEGER PRIMARY KEY,
+nameD TEXT NOT NULL,
+temperatureD INTEGER NOT NULL,
+timeMinutesD INTEGER NOT NULL,
+timeSecondsD INTEGER NOT NULL,
+recipieD TEXT,
+imageNameD TEXT,
+timeStampD TEXT
+);
+
+
+CREATE TABLE BreakfastRecipies(
+idB INTEGER PRIMARY KEY,
+nameB TEXT NOT NULL,
+temperatureB INTEGER NOT NULL,
+timeMinutesB INTEGER NOT NULL,
+timeSecondsB INTEGER NOT NULL,
+recipieB TEXT,
+imageNameB TEXT,
+timeStampB TEXT
+);
+
+
+--demozone
+CREATE TABLE AllRecipies1(
+id INTEGER PRIMARY KEY,
+name TEXT,
+temperature INTEGER,
+timeMinutes INTEGER,
+timeSeconds INTEGER,
+recipie TEXT,
+imageName TEXT,
+timeStamp TEXT,
+tables_Orgin TEXT
+);
+
+CREATE TABLE DinnerRecipies1(
+id INTEGER PRIMARY KEY,
+name TEXT NOT NULL,
+temperature INTEGER NOT NULL,
+timeMinutes INTEGER NOT NULL,
+timeSeconds INTEGER NOT NULL,
+recipie TEXT,
+imageName TEXT,
+timeStamp TEXT
+);
+
+
+CREATE TABLE BreakfastRecipies1(
+id INTEGER PRIMARY KEY,
+name TEXT NOT NULL,
+temperature INTEGER NOT NULL,
+timeMinutes INTEGER NOT NULL,
+timeSeconds INTEGER NOT NULL,
+recipie TEXT,
+imageName TEXT,
+timeStamp TEXT
+);
+
+----
+INSERT INTO DinnerRecipies1 (name, temperature, timeMinutes, timeSeconds, imageName) VALUES ('Corn Dogs', 350, 8, 0, 'corndog.png');
+INSERT INTO DinnerRecipies (nameD, temperatureD, timeMinutesD, timeSecondsD, imageNameD) VALUES ('FarmRich Boneless Chicken', 370,7, 00, 'farmRich.png');
+INSERT INTO DinnerRecipies (nameD, temperatureD, timeMinutesD, timeSecondsD, imageNameD) VALUES ('Totinos Pizza Rolls', 390, 4, 0, 'pizzarols.png');
+
+
+
+INSERT INTO BreakfastRecipies (nameB, temperatureB, timeMinutesB, timeSecondsB, imageNameB) VALUES ('Bacon', 385, 8, 0, 'bacon.png');
+
+
+
+--selects
+SELECT * FROM AllRecipies;
+SELECT * FROM DinnerRecipies1;
+SELECT * FROM AllRecipies1;
+
+
+--Triggers
+CREATE TRIGGER dinnerWidget AFTER INSERT ON DinnerRecipies1
+BEGIN
+    UPDATE DinnerRecipies SET timeStampD = DATETIME('now'); --adds a datetime to tho dinner tables
+    INSERT INTO AllRecipies (nameG, temperatureG, timeMinutesG, timeSecondsG, timeStampG, tables_Orgin) VALUES (NEW.nameD, NEW.temperatureD, NEW.timeMinutesD, NEW.timeSecondsD, DATETIME('now'),'Dinner');
+    UPDATE AllRecipies SET recipieG = NEW.recipieD WHERE nameG = NEW.nameD AND NEW.recipieD IS NOT NULL; 
+    UPDATE AllRecipies SET imageNameG = NEW.imageNameD WHERE nameG = NEW.nameD AND NEW.imageNameD IS NOT NULL; 
+END
+;
+--name attempt nameG = new.nameD
+
+CREATE TRIGGER breakfastWidget AFTER INSERT ON BreakfastRecipies
+BEGIN
+    UPDATE BreakfastRecipies SET timeStampB = DATETIME('now'); --adds a datetime to tho dinner tables
+    INSERT INTO AllRecipies (nameG, temperatureG, timeMinutesG, timeSecondsG, timeStampG, tables_Orgin) VALUES (NEW.nameB, NEW.temperatureB,NEW.timeMinutesB, NEW.timeSecondsB, DATETIME('now'), 'BreakFast');
+    UPDATE AllRecipies SET recipieG = NEW.recipieB WHERE nameG = NEW.nameB AND NEW.recipieB IS NOT NULL; 
+    UPDATE AllRecipies SET imageNameG = NEW.imageNameB WHERE nameG = NEW.nameB AND NEW.imageNameB IS NOT NULL;
+END
+;
+
+
+--demozone2
+CREATE TRIGGER dinnerWidgetTEST AFTER INSERT ON DinnerRecipies1
+BEGIN
+    UPDATE DinnerRecipies1 SET timeStamp = DATETIME('now'); --adds a datetime to tho dinner tables
+    INSERT INTO AllRecipies1 (name, temperature, timeMinutes, timeSeconds, timeStamp, tables_Orgin) VALUES (NEW.name, NEW.temperature, NEW.timeMinutes, NEW.timeSeconds, DATETIME('now'), 'Dinner');
+    UPDATE AllRecipies1 SET recipie = NEW.recipie WHERE name = NEW.name AND NEW.recipie IS NOT NULL; 
+    UPDATE AllRecipies1 SET imageName = NEW.imageName WHERE imageName = NEW.imageName AND NEW.imageName IS NOT NULL; 
+END
+;
+--name attempt nameG = new.nameD
+
+CREATE TRIGGER breakfastWidgetTEST AFTER INSERT ON BreakfastRecipies
+BEGIN
+    UPDATE BreakfastRecipies SET timeStampB = DATETIME('now'); --adds a datetime to tho dinner tables
+    INSERT INTO AllRecipies (nameG, temperatureG, timeMinutesG, timeSecondsG, timeStampG, tables_Orgin) VALUES (NEW.nameB, NEW.temperatureB,NEW.timeMinutesB, NEW.timeSecondsB, DATETIME('now'), 'BreakFast');
+    UPDATE AllRecipies SET recipieG = NEW.recipieB WHERE nameG = NEW.nameB AND NEW.recipieB IS NOT NULL; 
+    UPDATE AllRecipies SET imageNameG = NEW.imageNameB WHERE nameG = NEW.nameB AND NEW.imageNameB IS NOT NULL;
+END
+;
+
+----
+
+
+
+
+
+
+CREATE VIEW Duplicateschecker AS
+SELECT *, COUNT(*) AS timesAppeared  
+FROM AllRecipies 
+GROUP BY nameG 
+HAVING COUNT(*) > 1;
+
+SELECT * FROM Duplicateschecker;
+SELECT nameG FROM AllRecipies GROUP BY nameG HAVING count(*) > 1;
+
+--demo_inserts
+INSERT INTO DinnerRecipies(nameD, timeMinutesD, timeSecondsD, recipieD) VALUES ('BURGER', 1, 1, 'bread');
+INSERT INTO DinnerRecipies(nameD, timeMinutesD, timeSecondsD, recipieD) VALUES ('steak', 2, 2, 'steaky');
+INSERT INTO DinnerRecipies(nameD, timeMinutesD, timeSecondsD, recipieD) VALUES ('grilled', 3, 3, 'grilly');
+
+
+
+INSERT INTO BreakfastRecipies(nameB, timeMinutesB, timeSecondsB, recipieB) VALUES ('egg', 2, 2, 'eggy');
+INSERT INTO BreakfastRecipies(nameB, timeMinutesB, timeSecondsB, recipieB) VALUES ('ham', 3, 3, 'hammy');
+INSERT INTO BreakfastRecipies(nameB, timeMinutesB, timeSecondsB, recipieB) VALUES ('french', 3, 3, 'toast');
+INSERT INTO BreakfastRecipies(nameB, timeMinutesB, timeSecondsB, recipieB) VALUES ('french', 2, 4, 'toasty');
+
+
+
+
+
+
+DROP TRIGGER dinnerWidgetTEST;
+DROP TRIGGER breakfastWidget;
+
+DROP TABLE DinnerRecipies1;
+DROP TABLE BreakfastRecipies1;
+DROP TABLE AllRecipies1;

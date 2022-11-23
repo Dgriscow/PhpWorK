@@ -1,0 +1,128 @@
+
+CREATE TABLE AllRecipies(
+id INTEGER PRIMARY KEY,
+name TEXT,
+temperature INTEGER,
+timeMinutes INTEGER,
+timeSeconds INTEGER,
+recipie TEXT,
+imageName TEXT,
+timeStamp TEXT,
+tables_Orgin TEXT
+);
+
+CREATE TABLE DinnerRecipies(
+id INTEGER PRIMARY KEY,
+name TEXT NOT NULL,
+temperature INTEGER NOT NULL,
+timeMinutes INTEGER NOT NULL,
+timeSeconds INTEGER NOT NULL,
+recipie TEXT,
+imageName TEXT,
+timeStamp TEXT
+);
+
+
+CREATE TABLE BreakfastRecipies(
+id INTEGER PRIMARY KEY,
+name TEXT NOT NULL,
+temperature INTEGER NOT NULL,
+timeMinutes INTEGER NOT NULL,
+timeSeconds INTEGER NOT NULL,
+recipie TEXT,
+imageName TEXT,
+timeStamp TEXT
+);
+CREATE TABLE LunchRecipies(
+id INTEGER PRIMARY KEY,
+name TEXT NOT NULL,
+temperature INTEGER NOT NULL,
+timeMinutes INTEGER NOT NULL,
+timeSeconds INTEGER NOT NULL,
+recipie TEXT,
+imageName TEXT,
+timeStamp TEXT
+);
+----
+INSERT INTO DinnerRecipies (name, temperature, timeMinutes, timeSeconds, imageName) VALUES ('Corn Dogs', 350, 8, 00, 'corndog.png');
+INSERT INTO DinnerRecipies (name, temperature, timeMinutes, timeSeconds, imageName) VALUES ('FarmRich Boneless Chicken', 370,7, 00, 'farmRich.png');
+INSERT INTO DinnerRecipies (name, temperature, timeMinutes, timeSeconds, imageName) VALUES ('Totinos Pizza Rolls', 390, 4, 00, 'pizzarols.png');
+
+INSERT INTO LunchRecipies (name, temperature, timeMinutes, timeSeconds, imageName) VALUES ('Mini Corn Dogs', 350, 9, 00, 'miniCornDogs.png');
+INSERT INTO LunchRecipies (name, temperature, timeMinutes, timeSeconds, imageName) VALUES ('Marianos Chicken', 780, 7, 00, 'marianosChicken.png');
+
+
+INSERT INTO BreakfastRecipies (name, temperature, timeMinutes, timeSeconds, imageName) VALUES ('Bacon', 365, 8, 00, 'bacon.png');
+
+
+
+
+
+--selects
+SELECT * FROM AllRecipies;
+SELECT * FROM DinnerRecipies;
+SELECT * FROM BreakfastRecipies;
+SELECT * FROM LunchRecipies;
+
+
+
+--Triggers
+CREATE TRIGGER dinnerWidget AFTER INSERT ON DinnerRecipies
+BEGIN
+    UPDATE DinnerRecipies SET timeStamp = DATETIME('now'); --adds a datetime to tho dinner tables
+    INSERT INTO AllRecipies (name, temperature, timeMinutes, timeSeconds, timeStamp, tables_Orgin) VALUES (NEW.name, NEW.temperature, NEW.timeMinutes, NEW.timeSeconds, DATETIME('now'),'Dinner');
+    UPDATE AllRecipies SET recipie = NEW.recipie WHERE name = NEW.name AND NEW.recipie IS NOT NULL; 
+    UPDATE AllRecipies SET imageName = NEW.imageName WHERE name = NEW.name AND NEW.imageName IS NOT NULL; 
+END
+;
+
+
+--name attempt nameG = new.nameD
+
+CREATE TRIGGER breakfastWidget AFTER INSERT ON BreakfastRecipies
+BEGIN
+    UPDATE BreakfastRecipies SET timeStamp = DATETIME('now'); --adds a datetime to tho dinner tables
+    INSERT INTO AllRecipies (name, temperature, timeMinutes, timeSeconds, timeStamp, tables_Orgin) VALUES (NEW.name, NEW.temperature,NEW.timeMinutes, NEW.timeSeconds, DATETIME('now'), 'BreakFast');
+    UPDATE AllRecipies SET recipie = NEW.recipie WHERE name = NEW.name AND NEW.recipie IS NOT NULL; 
+    UPDATE AllRecipies SET imageName = NEW.imageName WHERE name = NEW.name AND NEW.imageName IS NOT NULL;
+END
+;
+
+CREATE TRIGGER lunchWidget AFTER INSERT ON LunchRecipies
+BEGIN
+    UPDATE lunchRecipies SET timeStamp = DATETIME('now'); --adds a datetime to tho dinner tables
+    INSERT INTO AllRecipies (name, temperature, timeMinutes, timeSeconds, timeStamp, tables_Orgin) VALUES (NEW.name, NEW.temperature,NEW.timeMinutes, NEW.timeSeconds, DATETIME('now'), 'Lunch');
+    UPDATE AllRecipies SET recipie = NEW.recipie WHERE name = NEW.name AND NEW.recipie IS NOT NULL; 
+    UPDATE AllRecipies SET imageName = NEW.imageName WHERE name = NEW.name AND NEW.imageName IS NOT NULL;
+END
+;
+
+
+
+
+
+
+
+
+CREATE VIEW Duplicateschecker AS
+SELECT *, COUNT(*) AS timesAppeared  
+FROM AllRecipies 
+GROUP BY $penis 
+HAVING COUNT(*) > 1;
+
+SELECT * FROM Duplicateschecker;
+SELECT nameG FROM AllRecipies GROUP BY nameG HAVING count(*) > 1;
+
+--demo_inserts
+----
+
+
+
+DROP TRIGGER dinnerWidget;
+DROP TRIGGER breakfastWidget;
+
+DROP TABLE LunchRecipies;
+DROP TABLE DinnerRecipies;
+DROP TABLE BreakfastRecipies;
+DROP TABLE AllRecipies;
+
